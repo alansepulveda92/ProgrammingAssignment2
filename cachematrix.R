@@ -1,33 +1,28 @@
-## Put comments here that give an overall description of what your
-## functions do
-
-## Write a short comment describing this function
-
 makeCacheMatrix <- function(x = matrix()) {
-                m <- NULL
-        set <- function(y) {
-                x <<- y
-                m <<- NULL
-        }
-        get <- function() x
-        setmean <- function(solve) m <<- solve
-        getmean <- function() m
+                inv <- NULL
+        set <- function(y) {                                ## La primera función, makeCacheMatrix crea una "matriz" especial
+                x <<- y                                     ## que es realmente una lista que contiene una función para:
+                inv <<- NULL                                  ## establecer la matriz
+        }                                                   ## obtener la matriz
+        get <- function() x                                 ## establecer la matriz inversa
+        set_matrix_inverse <- function(solve) inv <<- solve   ## obtener la matriz inversa
+        get_matrix_inversa <- function() inv
         list(set = set, get = get,
-             setmean = setmean,
-             getmean = getmean)
+             set_matrix_inverse = set_matrix_inverse,
+             get_matrix_inversa = get_matrix_inversa)
 }
 
 ## This function creates a special "matrix" object that can cache its inverse
 
 cacheSolve <- function(x, ...) {
-        m <- x$getmean()
-        if(!is.null(m)) {
-                message("getting cached data")
-                return(m)
-        }
-        data <- x$get()
-        m <- solve(data, ...)
-        x$setmean(m)
-        m   
+        inv <- x$get_matrix_inversa()
+        if(!is.null(inv)) {
+                message("getting cached data")            ## La siguiente función calcula la matriz inversa de la “matriz” creada con la función anterior
+                return(inv)                                ## Sin embargo, primero verifica si la matriz inversa ya se ha calculado
+        }                                                 ## Si es así, obtiene la matriz inversa del caché y omite el cálculo
+        data <- x$get()                                   ## De lo contrario, calcula la matriz inversa and
+        inv <- solve(data, ...)                           ## establece matriz inversa en la memoria caché mediante la función set_matrix_inverse()                  
+        x$set_matrix_inverse(inv)
+        inv  
         ## Return a matrix that is the inverse of 'x'
 }
